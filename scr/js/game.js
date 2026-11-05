@@ -1,14 +1,15 @@
 let canvas;
-let ctx;
-let character = new Image();
+let world;
 
 
 function init() {
     canvas = document.getElementById('canvas');
-    ctx = canvas.getContext('2d');
+    world = new World(canvas);
 
 
-    character.src = './assets/imgs/2_character_pepe/1_idle/idle/I-1.png';
+    
+    console.log(`My Character is`, world['character']);
+    console.log(`My chicken is`, world['enemies']);
 
-    ctx.drawImage(character, 20,  20, 50, 150);
+   
 }
