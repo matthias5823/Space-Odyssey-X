@@ -8,8 +8,8 @@ function init() {
 
 
     
-    console.log(`My Character is`, world['character']);
-    console.log(`My chicken is`, world['enemies']);
+    console.log(`My Character is`, world.character);
+    console.log(`My chicken is`, world.hoverDrones);
 
    
 }
