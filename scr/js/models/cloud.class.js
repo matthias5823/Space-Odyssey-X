@@ -1,7 +1,9 @@
 class Cloud extends MovableObject {
+    y = 20;
     height = 250;
     width = 400;
-    
+    speed = 0.5;
+
 
 
 
@@ -9,16 +11,15 @@ class Cloud extends MovableObject {
         super().loadImage('./assets/imgs/Plain/back/Wolken_oben.webp');
 
         // this.x = Math.random() * 500;
-        this.y = 20;
 
         this.animate();
     }
 
-      animate() {
-        setInterval(() => {
-            this.x -= 0.5;
-        }, 1000 / 60)
+    animate() {
+        this.moveLeft();
 
     }
+
+
 
 }

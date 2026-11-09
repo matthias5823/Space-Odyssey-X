@@ -1,23 +1,10 @@
 class World {
     character = new Character();
-    hoverDrones = [
-        new HoverDrone(),
-        new HoverDrone(),
-        new HoverDrone(),
-    ];
-    clouds = [
-        new Cloud()
-    ];
-    backgroundObjects = [
-        new BackgroundObkject('./assets/imgs/Plain/back/01_Himmel_Planeten.webp', 0),
-        new BackgroundObkject('./assets/imgs/Plain/back/03_Ferne_Berge.webp', 0),
-        new BackgroundObkject('./assets/imgs/Plain/back/02_Flusstal.webp', 0),
-        new BackgroundObkject('./assets/imgs/Plain/back/Auroria_Felsberg.webp', 0),
-        new BackgroundObkject('./assets/imgs/Plain/down/05_Laufboden.webp', 0)
-    ]
+    level = levelAuroria;
     canvas;
     ctx;
     keyboard;
+    camera_x = 0;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -33,13 +20,16 @@ class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.addObjectsToMap(this.backgroundObjects);
-        this.addObjectsToMap(this.clouds);
+
+        this.ctx.translate(this.camera_x, 0);
+
+        this.addObjectsToMap(this.level.backgroundObjects);
+        this.addObjectsToMap(this.level.clouds);
         this.addToMap(this.character);
 
-        this.addObjectsToMap(this.hoverDrones);
+        this.addObjectsToMap(this.level.hoverDrones);
         
-
+        this.ctx.translate(-this.camera_x, 0);
 
         // Draw() wird immmer wieder aufgerufe
         let self = this;
@@ -55,7 +45,17 @@ class World {
     }
 
     addToMap(mo) {
+        if (mo.otherDirection){
+            this.ctx.save();
+            this.ctx.translate(mo.width, 0);
+            this.ctx.scale(-1,1);
+            mo.x = mo.x * -1;
+        };
         this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+        if (mo.otherDirection){
+            mo.x = mo.x * -1;
+            this.ctx.restore();
+        };
     }
 
 }
