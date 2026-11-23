@@ -54,9 +54,13 @@ window.addEventListener("keyup", (pressKey) => {
 });
 
 function setCharacter(character){
+    if(world)return;  // Prüft ob das spiel bereits läuft das der Charakter nicht veränderbar ist
     userPlayer = character;
 }
 
-function startGame(){
-    init();
+function startGame() {
+    if (world) return;              // läuft schon → nicht noch einmal starten
+    document.activeElement.blur();  // Fokus vom Button nehmen, sonst "klickt" die Leertaste ihn
+    initLevel();                    // NEU: Level + Gegner erst jetzt erzeugen
+    init();                         // World + Charakter erzeugen
 }
