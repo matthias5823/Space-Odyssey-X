@@ -7,26 +7,44 @@
     <title>Space Odyssey X</title>
     <link rel="stylesheet" href="./style/style.css">
     <link rel="shortcut icon" href="./assets/icons/favicon.webp" type="image/x-icon">
+    <script src="./js/variables.js/players.js"></script>
+    <script src="./js/variables.js/game.js"></script>
+    <script src="./js/variables.js/finals-Opponents.js"></script>
+    <script src="./js/variables.js/opponents-Auroria.js"></script>
+    <script src="./js/models/drawable-object.class.js"></script>
     <script src="./js/models/movable-object.class.js"></script>
+    <script src="./js/models/projectile.class.js"></script> 
     <script src="./js/models/character.class.js"></script>
-    <script src="./js/models/hoverDrone.class.js"></script>
-    <script src="./js/models/world.class.js"></script>
     <script src="./js/models/cloud.class.js"></script>
+    <script src="./js/models/status-bar.class.js"></script>
+    <script src="./js/models/life-status.class.js"></script>
+    <script src="./js/models/plant-creature.class.js"></script>
+    <script src="./js/models/crystal-beetle.class.js"></script>
+
+    <script src="./js/models/lizard.class.js"></script>
+    <script src="./js/models/world.class.js"></script>
     <script src="./js/models/backgraound-object.class.js"></script>
     <script src="./js/models/keyboard.class.js"></script>
     <script src="./js/models/level.class.js"></script>
+    <script src="./js/models/finalOpponent.class.js"></script>
+    <script src="./js/models/shot-project-target.class.js"></script>
     <script src="./js/levels/level_Auroria.js"></script>
+    <script src="./js/models/enemy-shot.class.js"></script>
     <script src="./js/game.js"></script>
 </head>
 
-<body onload="init()">
+<body>
     <header>
         <h1>Space Odyssey X</h1>
     </header>
 
-    <canvas id="canvas" width="720" height="480">
+    <canvas id="canvas" width="1000" height="563">
 
     </canvas>
+    <img style="width: 50px; height: 50px;" src="./assets/imgs/Zix/portait_Zix.png"  alt="" onclick="setCharacter('Zix')">
+    <img style="width: 50px; height: 50px;" src="./assets/imgs/Captian_Leon/portait_Captian_Leon.png" alt="" onclick="setCharacter('CaptianLeon')">
+
+    <button onclick="startGame()">Spiel Starten</button>
 
 
 </body>
