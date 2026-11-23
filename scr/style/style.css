@@ -2,8 +2,14 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: black;
+
+}
+
+header{
+    color: white;
 }
 
 canvas {
-   background-color: black; 
+    background-color: black;
 }
