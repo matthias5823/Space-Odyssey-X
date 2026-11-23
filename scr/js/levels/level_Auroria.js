@@ -1,74 +1,76 @@
-const levelSectionOne = - 100;
-const levelSectionTwo = levelSectionOne + 999;
-const levelSectionThree = levelSectionTwo + 999;
-const levelSectionFour = levelSectionThree + 999;
-const levelSectionFive = levelSectionFour + 999;
+const levelSectionStart = -100;   // x-Position des ersten Hintergrund-Abschnitts
+const levelSectionWidth = 999;    // Breite eines Abschnitts
+const levelSectionCount = 5;      // Anzahl der Abschnitte
 
-const levelAuroria = new Level(
-    [
-        new Lizard(),
-        new CrystalBeetle(),
-        new Lizard(),
-        new CrystalBeetle(),
-        new Lizard(),
-        new CrystalBeetle(),
-        new PlantCreature (),
-        new PlantCreature (),
-        new PlantCreature (),
-        new PlantCreature (),
+// Ebenen des Hintergrunds, von hinten nach vorne
+const backgroundLayers = [
+    '01-himmel',
+    '02-planeten',
+    '03-wolken',
+    '05-ferne-felsen',
+    '06-fluss',
+    '07-ufer',
+    '11-boden'
+];
+
+let levelAuroria; // wird erst beim Spielstart gefüllt
+
+
+/**
+ * Erzeugt das Level Auroria mit Gegnern, Wolken und Hintergrund.
+ * Wird erst beim Spielstart aufgerufen, damit die Gegner nicht schon im Menü loslaufen.
+ */
+function initLevel() {
+    levelAuroria = new Level(
+        createOpponents(),
+        createClouds(),
+        createBackgrounds()
+    );
+}
+
+
+/**
+ * Erzeugt alle Gegner des Levels.
+ * @returns {MovableObject[]} Liste der Gegner
+ */
+function createOpponents() {
+    return [
+        new Lizard(), new Lizard(), new Lizard(),
+        new CrystalBeetle(), new CrystalBeetle(), new CrystalBeetle(),
+        new PlantCreature(), new PlantCreature(), new PlantCreature(), new PlantCreature(),
         new Endboss()
-    ],
-    [
+    ];
+}
+
+
+/**
+ * Erzeugt die Wolken des Levels.
+ * @returns {Cloud[]} Liste der Wolken
+ */
+function createClouds() {
+    return [
         new Cloud('./assets/imgs/Plain/Objekte/wolke_01.webp'),
         new Cloud('./assets/imgs/Plain/Objekte/wolke_02.webp'),
         new Cloud('./assets/imgs/Plain/Objekte/wolke_03.webp'),
-        new Cloud('./assets/imgs/Plain/Objekte/wolke_04.webp'),
-    ],
-    [
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/01-himmel/01.webp', levelSectionOne),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/02-planeten/01.webp', levelSectionOne),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/05-ferne-felsen/01.webp', levelSectionOne),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/06-fluss/01.webp', levelSectionOne),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/07-ufer/01.webp', levelSectionOne),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/11-boden/01.webp', levelSectionOne),
-
-        //  <----------------------- ⊼⊼⊼⊼ End Section One ⊼⊼⊼⊼ ---- ⊽⊽⊽⊽ Beginn Section Two ⊽⊽⊽⊽ -------------
-
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/01-himmel/02.webp', levelSectionTwo),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/02-planeten/02.webp', levelSectionTwo),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/05-ferne-felsen/02.webp', levelSectionTwo),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/06-fluss/02.webp', levelSectionTwo),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/07-ufer/02.webp', levelSectionTwo),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/11-boden/02.webp', levelSectionTwo),
-
-        //  <----------------------- ⊼⊼⊼⊼ End Section Two ⊼⊼⊼⊼ ---- ⊽⊽⊽⊽ Beginn Section Three ⊽⊽⊽⊽ -------------
+        new Cloud('./assets/imgs/Plain/Objekte/wolke_04.webp')
+    ];
+}
 
 
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/01-himmel/03.webp', levelSectionThree),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/02-planeten/03.webp', levelSectionThree),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/05-ferne-felsen/03.webp', levelSectionThree),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/06-fluss/03.webp', levelSectionThree),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/07-ufer/03.webp', levelSectionThree),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/11-boden/03.webp', levelSectionThree),
-
-        //  <----------------------- ⊼⊼⊼⊼ End Section Three ⊼⊼⊼⊼ ---- ⊽⊽⊽⊽ Beginn Section Four ⊽⊽⊽⊽ -------------
-
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/01-himmel/04.webp', levelSectionFour),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/02-planeten/04.webp', levelSectionFour),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/05-ferne-felsen/04.webp', levelSectionFour),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/06-fluss/04.webp', levelSectionFour),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/07-ufer/04.webp', levelSectionFour),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/11-boden/04.webp', levelSectionFour),
-
-        //  <----------------------- ⊼⊼⊼⊼ End Section Four ⊼⊼⊼⊼ ---- ⊽⊽⊽⊽ Beginn Section Five ⊽⊽⊽⊽ -------------
-
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/01-himmel/05.webp', levelSectionFive),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/02-planeten/05.webp', levelSectionFive),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/05-ferne-felsen/05.webp', levelSectionFive),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/06-fluss/05.webp', levelSectionFive),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/07-ufer/05.webp', levelSectionFive),
-        new BackgroundObkject('./assets/imgs/Plain/Ebenen/11-boden/05.webp', levelSectionFive),
-
-
-    ]
-);
+/**
+ * Erzeugt alle Hintergrund-Ebenen für alle Abschnitte des Levels.
+ * Abschnitt 1 nutzt die Bilder 01.webp, Abschnitt 2 die Bilder 02.webp usw.
+ * @returns {BackgroundObkject[]} Liste der Hintergrundobjekte
+ */
+function createBackgrounds() {
+    let backgrounds = [];
+    for (let section = 0; section < levelSectionCount; section++) {
+        let x = levelSectionStart + section * levelSectionWidth;   // Startposition des Abschnitts
+        let number = '0' + (section + 1);                           // "01", "02", … "05"
+        backgroundLayers.forEach((layer) => {
+            let path = `./assets/imgs/Plain/Ebenen/${layer}/${number}.webp`;
+            backgrounds.push(new BackgroundObkject(path, x));
+        });
+    }
+    return backgrounds;
+}
