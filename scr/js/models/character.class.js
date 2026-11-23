@@ -37,6 +37,8 @@ class Character extends MovableObject {
     animate() {
 
         setInterval(() => {
+            if (this.isDead()) return;   // Game Over → keine Steuerung mehr
+
             if (this.world.keyboard.right && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
@@ -72,7 +74,8 @@ class Character extends MovableObject {
 
         setInterval(() => {
             if (this.isDead()) {
-                this.playAnimation(this.imagesDead);
+
+                this.playDeadAnimation(this.imagesDead);
             }
             else if (this.isHurt()) {
                 this.playAnimation(this.imagesHurt);
