@@ -73,24 +73,8 @@ class Character extends MovableObject {
 
 
         setInterval(() => {
-            if (this.isDead()) {
-
-                this.playDeadAnimation(this.imagesDead);
-            }
-            else if (this.isHurt()) {
-                this.playAnimation(this.imagesHurt);
-            }
-            else if (this.isAboveGround()) {
-                this.playAnimation(this.imagesJumping);
-            }
-            else if (this.isShooting) {
-                this.playShootAnimation();
-            }
-            else {  // Walk animation 
-                if (this.world.keyboard.right || this.world.keyboard.left) {
-                    this.playAnimation(this.imagesWalking);
-                }
-            }
+            this.updateAnimation();   // passendes Bild anzeigen
+            this.updateShooting();    // Schuss-Ablauf läuft unabhängig davon weiter
         }, 150);
     }
 
@@ -106,28 +90,12 @@ class Character extends MovableObject {
         // bei 0 Leben bleibt energy 0 → isDead() ist true → Dead-Animation (Game Over)
     }
 
-    playShootAnimation() {
-        this.img = this.imgCache[this.imagesShoot[this.shootFrame]]; // aktuelles Bild zeigen
-
-        if (this.shootFrame === this.shootFireFrame) {
-            this.fireShot();                                         // passendes Bild → Geschoss erzeugen
-        }
-
-        this.shootFrame++;                                           // nächstes Bild
-
-        if (this.shootFrame >= this.imagesShoot.length) {
-            this.isShooting = false;                                 // Animation fertig
-        }
-    }
-
-
     fireShot() {
         let direction = this.otherDirection ? -1 : 1;
         let startX = this.otherDirection ? this.x : this.x + this.width - 20;
         let startY = this.y + this.height / 2 + this.shotOfSet;
         this.world.shotProjectTarget.push(new ShotProjectTarget(startX, startY, direction));
     }
-
 
     // Prüft, ob der Charakter von oben auf mo fällt.
 
@@ -144,6 +112,41 @@ class Character extends MovableObject {
     // Ist der Charakter gerade geschützt
     isInvulnerable() {
         return new Date().getTime() < this.invulnerableUntil;
+    }
+
+    /**
+     * Wählt das Bild passend zum aktuellen Zustand.
+     * Steuert nur die Anzeige – der Schuss selbst läuft in updateShooting().
+     */
+    updateAnimation() {
+        if (this.isDead()) {
+            this.playDeadAnimation(this.imagesDead);
+        } else if (this.isHurt()) {
+            this.playAnimation(this.imagesHurt);
+        } else if (this.isAboveGround()) {
+            this.playAnimation(this.imagesJumping);
+        } else if (this.isShooting) {
+            this.img = this.imgCache[this.imagesShoot[this.shootFrame]]; // aktuelles Schuss-Bild
+        } else if (this.world.keyboard.right || this.world.keyboard.left) {
+            this.playAnimation(this.imagesWalking);
+        }
+    }
+
+    /**
+     * Zählt den Schuss-Ablauf Bild für Bild weiter und feuert beim shootFireFrame.
+     * Läuft unabhängig von der Animation – auch beim Springen oder wenn der Charakter getroffen wird.
+     */
+    updateShooting() {
+        if (!this.isShooting || this.isDead()) return;   // kein Schuss aktiv oder tot → nichts tun
+
+        if (this.shootFrame === this.shootFireFrame) {
+            this.fireShot();                              // Geschoss erzeugen
+        }
+        this.shootFrame++;
+
+        if (this.shootFrame >= this.imagesShoot.length) {
+            this.isShooting = false;                      // Ablauf fertig
+        }
     }
 
 
