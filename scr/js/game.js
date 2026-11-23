@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let userPlayer = "CaptianLeon";
 
 function init() {
     canvas = document.getElementById('canvas');
@@ -9,7 +10,7 @@ function init() {
 
 
     console.log(`My Character is`, world.character);
-    console.log(`My chicken is`, world.hoverDrones);
+    console.log(`My chicken is`, world.opponents);
 
 
 }
@@ -51,3 +52,11 @@ window.addEventListener("keyup", (pressKey) => {
         keyboard.space = false;
     };
 });
+
+function setCharacter(character){
+    userPlayer = character;
+}
+
+function startGame(){
+    init();
+}
