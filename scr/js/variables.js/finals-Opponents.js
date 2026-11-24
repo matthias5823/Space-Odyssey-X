@@ -2,7 +2,7 @@ const finalOpponents = {
     "Auroria": {
         "name": "Warlord Vrex",
         "speed": 1,
-        "energy": 100,
+        "energy": 200,
         "offset" : {"top" : 50, "right": 25, "bottom": 15, "left": 40},
         "images": {
             "Walking": [
@@ -76,7 +76,14 @@ const finalOpponents = {
                 './assets/imgs/Warlord_Vrex/Energy/energy_8.webp',
                 './assets/imgs/Warlord_Vrex/Energy/energy_9.webp',
                 './assets/imgs/Warlord_Vrex/Energy/energy_10.webp'
-            ]
+            ],
+            "Shot": [
+                './assets/imgs/Warlord_Vrex/Shot/shot_1.webp',
+                './assets/imgs/Warlord_Vrex/Shot/shot_2.webp',
+                './assets/imgs/Warlord_Vrex/Shot/shot_3.webp',
+                './assets/imgs/Warlord_Vrex/Shot/shot_4.webp',
+                './assets/imgs/Warlord_Vrex/Shot/shot_5.webp'
+            ],
         }
     }
 }
