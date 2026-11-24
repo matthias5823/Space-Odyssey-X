@@ -3,11 +3,11 @@ const players =
     "CaptianLeon":
     {
         "name": "Captain Leon",
-        "speed": 2,
+        "speed": 2.5,
         "energy": 100,
-        "shotFrame": 6,
-        "shotOfSet": -10,
-        "offset" : {"top" : 20, "right": 40, "bottom": 10, "left": 25},
+        "shootFireFrame": 6,
+        "muzzle": { "x": 0.68, "y": 0.45 },
+        "offset": { "top": 20, "right": 40, "bottom": 10, "left": 25 },
         "images": {
             "Walking": [
                 './assets/imgs/Captian_Leon/01_Run/run_1.webp',
@@ -107,9 +107,9 @@ const players =
         "name": "Zix",
         "speed": 2,
         "energy": 100,
-        "shotFrame": 5,
-        "shotOfSet": 10,
-        "offset" : {"top" : 0, "right": 0, "bottom": 0, "left": 0},
+        "shootFireFrame": 4,
+        "muzzle": { "x": 0.85, "y": 0.64 },
+        "offset": { "top": 20, "right": 28, "bottom": 15, "left": 15 },
         "images": {
             "Walking": [
                 './assets/imgs/Zix/01_Run/run_1.webp',
