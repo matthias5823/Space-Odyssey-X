@@ -2,12 +2,12 @@ class Character extends MovableObject {
 
     isShooting = false; // setzt den Wert auf ture wenn die Schuss- Animation gerade läuft. 
     shootFrame = 0; // nimmt den Index wert von der Schuss animation
-    shootFireFrame = 5; // bei welchem Bild die Schuss Animation los geht
+    shootFireFrame = players[userPlayer].shootFireFrame;   // Bild mit Mündungsfeuer, wann die Schuss Animtion startet
     spaceLocked = false; // verhindert Dauerfeuer, solange die Taste gehalten wird
     shotOfSet = players[userPlayer].shotOfSet;
     speed = players[userPlayer].speed;
     invulnerableUntil = 0; // bis zu diesem Zeitpunkt (ms) bekommt der Charakter keinen Schaden
-    offset = players[userPlayer].offset;
+    muzzle = players[userPlayer].muzzle;                    // Waffenmündung im Bild
 
     imagesSleep = players[userPlayer].images.Sleep;
     imagesWalking = players[userPlayer].images.Walking;
@@ -90,15 +90,18 @@ class Character extends MovableObject {
         // bei 0 Leben bleibt energy 0 → isDead() ist true → Dead-Animation (Game Over)
     }
 
+    /**
+     * Erzeugt einen Schuss genau an der Waffenmündung, gerade in Blickrichtung.
+     */
     fireShot() {
         let direction = this.otherDirection ? -1 : 1;
-        let startX = this.otherDirection ? this.x : this.x + this.width - 20;
-        let startY = this.y + this.height / 2 + this.shotOfSet;
-        this.world.shotProjectTarget.push(new ShotProjectTarget(startX, startY, direction));
+        let muzzle = this.getMuzzlePoint(this.muzzle);
+        let shot = new ShotProjectTarget(muzzle.x, muzzle.y, direction);
+        shot.centerOn(muzzle);
+        this.world.shotProjectTarget.push(shot);
     }
 
     // Prüft, ob der Charakter von oben auf mo fällt.
-
     isJumpingOn(mo) {
         let a = this.getHitbox();
         let b = mo.getHitbox();
@@ -123,10 +126,10 @@ class Character extends MovableObject {
             this.playDeadAnimation(this.imagesDead);
         } else if (this.isHurt()) {
             this.playAnimation(this.imagesHurt);
+        } else if (this.isShooting) {
+            this.img = this.imgCache[this.imagesShoot[this.shootFrame]]; // aktuelles Schuss-Bild 
         } else if (this.isAboveGround()) {
             this.playAnimation(this.imagesJumping);
-        } else if (this.isShooting) {
-            this.img = this.imgCache[this.imagesShoot[this.shootFrame]]; // aktuelles Schuss-Bild
         } else if (this.world.keyboard.right || this.world.keyboard.left) {
             this.playAnimation(this.imagesWalking);
         }
