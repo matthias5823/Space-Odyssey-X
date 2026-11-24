@@ -8,9 +8,9 @@ class Lizard extends MovableObject {
     energy = 40;                                          // 2 Treffer à 20 Schaden
     offset = opponentsAuroria['lizard'].offset;
 
-    constructor() {
+    constructor(x = 300 + Math.random() * 1500) {
         super().loadImage(this.imagesWalking[0]);
-        this.x = 300 + Math.random() * 1500;
+        this.x = x;                                   // Position vom Level
         this.speed = 0.1 + Math.random() * 0.5;
         this.loadImages(this.imagesWalking);              // Walk-Bilder in den Cache laden
         this.loadImages(this.imagesHurt);                 // Hurt-Bilder in den Cache laden
@@ -21,29 +21,44 @@ class Lizard extends MovableObject {
 
     animate() {
         // Bewegung: nur laufen, wenn nicht tot und nicht gerade verletzt
-        this.moveInterval = setInterval(() => {
-            if (!this.isDead() && !this.isHurt()) {
-                this.moveLeft();
-            }
-        }, 70);
+        this.moveInterval = setInterval(() => this.moveLizard(), 70);
 
         // Animation: tot → Dead, verletzt → Hurt, sonst → Walk
-        this.animationInterval = setInterval(() => {
-            if (this.isDead()) {
-                this.playDeadAnimation(this.imagesDead);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.imagesHurt);
-            } else {
-                this.playAnimation(this.imagesWalking);
-            }
-        }, 70);
+        this.animationInterval = setInterval(() => this.animateLizard(), 70);
     };
 
-  
- // Tötet den Lizard sofort und tauscht die Sterbe-Animation gegen DeadJump.
+
+    // Tötet den Lizard sofort und tauscht die Sterbe-Animation gegen DeadJump.
 
     killByJump() {
         this.energy = 0;                        // sofort tot → isDead() ist true
         this.imagesDead = this.imagesDeadJump;  // animate() spielt jetzt DeadJump statt DeadShoot
+    }
+
+    /**
+    * Bewegt den Lizard: dreht sich zum Charakter, wenn er nah ist,
+    * und läuft auf ihn zu, bis sich die Hitboxen berühren.
+    */
+    moveLizard() {
+        if (this.isDead() || this.isHurt()) return;          // tot oder verletzt → nicht laufen
+        if (!this.isCharacterWithin(800)) return;            // erst losgehen, wenn der Charakter näher als 800 px ist
+        if (this.isCharacterWithin(500)) {
+            this.faceCharacter();                            // Charakter nah → zu ihm drehen
+        }
+        this.walkUntilTouchingCharacter();
+    }
+
+    /**
+     * Wählt die passende Animation: tot → Dead, verletzt → Hurt,
+     * steht am Charakter → Bild anhalten, sonst → Walk.
+     */
+    animateLizard() {
+        if (this.isDead()) {
+            this.playDeadAnimation(this.imagesDead);
+        } else if (this.isHurt()) {
+            this.playAnimation(this.imagesHurt);
+        } else if (!this.isTouchingCharacter()) {
+            this.playAnimation(this.imagesWalking);          // nur laufen, wenn er sich auch bewegt
+        }
     }
 }
