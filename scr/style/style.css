@@ -1,15 +1,54 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
 body {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: black;
-
+    background-image: url(../assets/imgs/startBackground/SpaceOdysseyX_Background.webp);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-header{
+header {
     color: white;
 }
 
 canvas {
     background-color: black;
 }
+
+.off {
+    display: none;
+}
+
+.start-side {
+    height: 563px;
+    width: 1000px;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    background-image: url(../assets/imgs/startBackground/SpaceOdysseyX_Opening.webp);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.control{
+    height: 136px;
+    width: 300px;
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border: 2px solid blue;
+
+    background-color: rgba(119, 115, 115, 0.548);
+}
+
