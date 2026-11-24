@@ -8,6 +8,7 @@ class MovableObject extends DrawableObject {
     lastHit = 0;
     deadFrame = 0;        // welches Bild der Sterbe-Animation ist dran?
     isRemovable = false;  // true, wenn die Sterbe-Animation fertig ist → World darf das Objekt löschen
+    hurtDuration = 1500; // wie lange (ms) die Hurt-Phase nach einem Treffer dauert
 
     applyGravity() {
         setInterval(() => {
@@ -41,10 +42,12 @@ class MovableObject extends DrawableObject {
         }
     }
 
+    /**
+     * Ist das Objekt gerade verletzt (Treffer liegt weniger als hurtDuration zurück)?
+     * @returns {boolean}
+     */
     isHurt() {
-        let timePassed = new Date().getTime() - this.lastHit; // Defferenz in ms
-        timePassed = timePassed / 1000; // Differenz in sec
-        return timePassed < 1.5;
+        return new Date().getTime() - this.lastHit < this.hurtDuration;
     }
 
 
@@ -98,7 +101,6 @@ class MovableObject extends DrawableObject {
         clearInterval(this.animationInterval);
     }
 
-
     // Liefert das echte Treffer-Rechteck (Bild minus Offset).
     // Schaut das Objekt nach links (otherDirection), werden links und rechts getauscht,
     // weil das Bild dann gespiegelt ist.
@@ -116,14 +118,88 @@ class MovableObject extends DrawableObject {
     }
 
     isHitting(mo) {
-    // Statt des ganzen Bildes vom Ziel (mo) wird nur seine Hitbox genommen,
-    // also das Bild minus Offset. b hat x, y, width und height.
-    let b = mo.getHitbox();
+        // Statt des ganzen Bildes vom Ziel (mo) wird nur seine Hitbox genommen,
+        // also das Bild minus Offset. b hat x, y, width und height.
+        let b = mo.getHitbox();
 
-    // Zwei Rechtecke überschneiden sich nur, wenn alle vier Bedingungen stimmen:
-    return this.x + this.width > b.x &&    // rechte Kante vom Schuss liegt rechts von der linken Kante der Hitbox
-        this.x < b.x + b.width &&          // linke Kante vom Schuss liegt links von der rechten Kante der Hitbox
-        this.y + this.height > b.y &&      // Unterkante vom Schuss liegt unter der Oberkante der Hitbox
-        this.y < b.y + b.height;           // Oberkante vom Schuss liegt über der Unterkante der Hitbox
-}
+        // Zwei Rechtecke überschneiden sich nur, wenn alle vier Bedingungen stimmen:
+        return this.x + this.width > b.x &&    // rechte Kante vom Schuss liegt rechts von der linken Kante der Hitbox
+            this.x < b.x + b.width &&          // linke Kante vom Schuss liegt links von der rechten Kante der Hitbox
+            this.y + this.height > b.y &&      // Unterkante vom Schuss liegt unter der Oberkante der Hitbox
+            this.y < b.y + b.height;           // Oberkante vom Schuss liegt über der Unterkante der Hitbox
+
+    }
+
+    /**
+     * Abstand zum Charakter in Pixeln (egal ob links oder rechts).
+     * @returns {number} Abstand – oder Infinity, solange die World noch nicht gesetzt ist
+     */
+    distanceToCharacter() {
+        if (!this.world) return Infinity;                 // noch keine World → "unendlich weit weg"
+        return Math.abs(this.world.character.x - this.x);
+    }
+
+    /**
+     * Ist der Charakter näher als die angegebene Entfernung?
+     * @param {number} distance - Entfernung in Pixeln
+     * @returns {boolean}
+     */
+    isCharacterWithin(distance) {
+        return this.distanceToCharacter() < distance;
+    }
+
+    /**
+     * Dreht das Objekt zum Charakter.
+     * Gilt für Gegner, deren Bilder standardmäßig nach links schauen:
+     * otherDirection = true → Bild wird gespiegelt → schaut nach rechts.
+     */
+    faceCharacter() {
+        this.otherDirection = this.world.character.x > this.x;
+    }
+
+    /**
+     * Läuft in Blickrichtung – außer der Charakter ist näher als stopDistance.
+     * @param {number} stopDistance - ab diesem Abstand bleibt das Objekt stehen
+     */
+    walkUnlessTooClose(stopDistance) {
+        if (this.isCharacterWithin(stopDistance)) return; // zu nah → stehen bleiben
+        if (this.otherDirection) {
+            this.moveRight();
+        } else {
+            this.moveLeft();
+        }
+    }
+
+    /**
+ * Berührt die Hitbox dieses Objekts gerade die Hitbox des Charakters?
+ * @returns {boolean}
+ */
+    isTouchingCharacter() {
+        if (!this.world) return false;                 // noch keine World → keine Berührung
+        return this.isColliding(this.world.character);
+    }
+
+
+    /**
+     * Läuft in Blickrichtung, bis die Hitbox den Charakter berührt – dann stehen bleiben.
+     */
+    walkUntilTouchingCharacter() {
+        if (this.isTouchingCharacter()) return;        // berührt → stehen bleiben (macht weiter Schaden)
+        if (this.otherDirection) {
+            this.moveRight();
+        } else {
+            this.moveLeft();
+        }
+    }
+
+    /**
+     * Rechnet einen Mündungspunkt (Anteil von Breite/Höhe des Bildes) in Spielkoordinaten um.
+     * Schaut das Objekt in die andere Richtung, wird der Punkt horizontal gespiegelt.
+     * @param {{x: number, y: number}} muzzle - z. B. { x: 0.85, y: 0.64 }
+     * @returns {{x: number, y: number}} Position der Mündung im Level
+     */
+    getMuzzlePoint(muzzle) {
+        let fx = this.otherDirection ? 1 - muzzle.x : muzzle.x;
+        return { x: this.x + this.width * fx, y: this.y + this.height * muzzle.y };
+    }
 }
