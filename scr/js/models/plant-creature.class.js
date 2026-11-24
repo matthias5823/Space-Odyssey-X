@@ -16,9 +16,9 @@ class PlantCreature extends MovableObject {
     groundY = 450;                             // Unterkante der Plant (jetziges y 365 + Standardhöhe 140)
     offset = opponentsAuroria['plant-creature'].offset;
 
-    constructor() {
-        super().loadImage(this.imagesGrow[0]);
-        this.x = 20 + Math.random() * 2500;
+constructor(x = 20 + Math.random() * 2500) {
+    super().loadImage(this.imagesGrow[0]);
+    this.x = x;
         this.loadImages(this.imagesGrow);
         this.loadImages(this.imagesSnatch);                             // Snatch-Bilder in den Cache laden
         this.loadImages(this.imagesHurt);
@@ -47,12 +47,10 @@ class PlantCreature extends MovableObject {
      * Zeigt das erste Grow-Bild und prüft, ob der Charakter näher als triggerDistance ist.
      */
     waitForCharacter() {
-        this.setSize(this.sizeGrow); 
+        this.setSize(this.sizeGrow);
         this.img = this.imgCache[this.imagesGrow[0]];                   // Ruhebild anzeigen
-        if (!this.world) return;                                        // World noch nicht gesetzt → nächstes Mal prüfen
 
-        let distance = Math.abs(this.world.character.x - this.x);       // Abstand egal ob links oder rechts
-        if (distance < this.triggerDistance) {
+        if (this.isCharacterWithin(this.triggerDistance)) {
             this.isActivated = true;                                    // Charakter ist nah → Grow starten
         }
     }
@@ -61,7 +59,7 @@ class PlantCreature extends MovableObject {
      * Spielt die Grow-Animation genau einmal ab.
      */
     playGrowAnimation() {
-        this.setSize(this.sizeGrow); 
+        this.setSize(this.sizeGrow);
         this.img = this.imgCache[this.imagesGrow[this.growFrame]];      // aktuelles Grow-Bild
         this.growFrame++;
         if (this.growFrame >= this.imagesGrow.length) {
