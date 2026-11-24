@@ -1,58 +1,41 @@
 class StatusBar extends DrawableObject {
-    imagesEnergy = players[userPlayer]['images']['Energy'];
+    percentage = 100;
 
-    percentage = 0;
-
-    constructor() {
+    /**
+     * @param {string[]} images - 10 Bilder, vom leersten (Index 0) bis zum vollen (Index 9)
+     * @param {number} x - Position links
+     * @param {number} y - Position oben
+     * @param {number} width - Breite
+     * @param {number} height - Höhe
+     */
+    constructor(images, x, y, width, height) {
         super();
-        this.loadImages(this.imagesEnergy);
-        this.x = 0;
-        this.y = 20;
-        this.width = 180;
-        this.height = 50;
+        this.images = images;
+        this.loadImages(images);
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
         this.setPercentage(100);
     }
 
+
+    /**
+     * Setzt den Füllstand und zeigt das passende Bild.
+     * @param {number} percentage - 0 bis 100
+     */
     setPercentage(percentage) {
         this.percentage = percentage;
-        let path = this.imagesEnergy[this.resolveImageIndex()]
-        this.img = this.imgCache[path];
+        this.img = this.imgCache[this.images[this.resolveImageIndex()]];
     }
 
-    resolveImageIndex() {
-        if (this.percentage == 100) {
-            return 9;
-        }
-        else if (this.percentage > 90) {
-            return 8;
-        }
-        else if (this.percentage > 80) {
-            return 7;
-        }
-        else if (this.percentage > 70) {
-            return 6;
-        }
-        else if (this.percentage > 60) {
-            return 5;
-        }
-        else if (this.percentage > 50) {
-            return 4;
-        }
-        else if (this.percentage > 40) {
-            return 3;
-        }
-        else if (this.percentage > 30) {
-            return 2;
-        }
-        else if (this.percentage > 20) {
-            return 1;
-        }
-        else if (this.percentage > 10) {
-            return 0;
-        }
-        else {
-            return 0;
-        }
 
+    /**
+     * Rechnet den Prozentwert in einen Bild-Index um: 1–10 % → 0, 11–20 % → 1 … 91–100 % → 9.
+     * @returns {number} Index zwischen 0 und images.length - 1
+     */
+    resolveImageIndex() {
+        let index = Math.ceil(this.percentage / 10) - 1;
+        return Math.max(0, Math.min(index, this.images.length - 1)); // nie kleiner 0, nie größer als letztes Bild
     }
 }
