@@ -2,6 +2,10 @@ const levelSectionStart = -100;   // x-Position des ersten Hintergrund-Abschnitt
 const levelSectionWidth = 999;    // Breite eines Abschnitts
 const levelSectionCount = 5;      // Anzahl der Abschnitte
 
+const spawnStart = 600;    // erster Gegner-Platz – genug Abstand zum Start des Charakters
+const spawnEnd = 3900;     // letzter Platz – vor dem Endboss (x = 4150)
+const spawnJitter = 80;    // zufällige Verschiebung innerhalb des Platzes (± px)
+
 // Ebenen des Hintergrunds, von hinten nach vorne
 const backgroundLayers = [
     '01-himmel',
@@ -30,16 +34,20 @@ function initLevel() {
 
 
 /**
- * Erzeugt alle Gegner des Levels.
+ * Erzeugt alle Gegner des Levels mit Abstand zueinander.
+ * Die Reihenfolge der Typen wird gemischt, jeder bekommt einen eigenen Platz.
  * @returns {MovableObject[]} Liste der Gegner
  */
 function createOpponents() {
-    return [
-        new Lizard(), new Lizard(), new Lizard(),
-        new CrystalBeetle(), new CrystalBeetle(), new CrystalBeetle(),
-        new PlantCreature(), new PlantCreature(), new PlantCreature(), new PlantCreature(),
-        new Endboss()
-    ];
+    let types = shuffle([
+        Lizard, Lizard, Lizard,
+        CrystalBeetle, CrystalBeetle, CrystalBeetle,
+        PlantCreature, PlantCreature, PlantCreature, PlantCreature
+    ]);
+    let positions = createSpawnPositions(types.length);
+    let opponents = types.map((Type, i) => new Type(positions[i])); // jeder Typ an seinem Platz
+    opponents.push(new Endboss());                                  // Endboss bleibt fest am Ende
+    return opponents;
 }
 
 
@@ -73,4 +81,34 @@ function createBackgrounds() {
         });
     }
     return backgrounds;
+}
+
+/**
+ * Teilt die Strecke von spawnStart bis spawnEnd in gleich große Plätze
+ * und gibt für jeden Platz eine leicht zufällige x-Position zurück.
+ * @param {number} count - Anzahl der Gegner
+ * @returns {number[]} x-Positionen, von links nach rechts
+ */
+function createSpawnPositions(count) {
+    let slotWidth = (spawnEnd - spawnStart) / count;               // Breite eines Platzes
+    let positions = [];
+    for (let i = 0; i < count; i++) {
+        let center = spawnStart + slotWidth * (i + 0.5);           // Mitte des Platzes
+        let jitter = (Math.random() * 2 - 1) * spawnJitter;        // zwischen -80 und +80
+        positions.push(center + jitter);
+    }
+    return positions;
+}
+
+/**
+ * Mischt ein Array zufällig (Fisher-Yates).
+ * @param {Array} array - das zu mischende Array
+ * @returns {Array} dasselbe Array, gemischt
+ */
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];               // zwei Elemente tauschen
+    }
+    return array;
 }
