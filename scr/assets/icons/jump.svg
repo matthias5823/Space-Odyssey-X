@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<defs><linearGradient id="plate" x2="0" y2="1"><stop stop-color="#153653"/><stop offset="1" stop-color="#050e21"/></linearGradient><linearGradient id="edge" x2="0" y2="1"><stop stop-color="#b5fbff"/><stop offset=".48" stop-color="#37dfff"/><stop offset="1" stop-color="#258fdd"/></linearGradient><linearGradient id="metal" x2="0" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#e9f8ff"/><stop offset="1" stop-color="#a8bfd8"/></linearGradient><path id="frame" d="M18 5h28l13 13v28L46 59H18L5 46V18Z"/></defs>
+<use href="#frame" fill="none" stroke="#1bc8ff" stroke-width="7" stroke-opacity=".16"/>
+<use href="#frame" fill="url(#plate)" stroke="url(#edge)" stroke-width="2"/>
+<path d="M19.5 9h25L55 19.5v25L44.5 55h-25L9 44.5v-25Z" fill="none" stroke="#3b9fc5" stroke-opacity=".46"/>
+<path d="M26 9h12M26 55h12" stroke="#7eeaff" stroke-width="1.5" stroke-linecap="round"/>
+<g fill="none" stroke="url(#metal)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 38V18m-10 10 10-10 10 10M22 46h20"/></g>
+</svg>
