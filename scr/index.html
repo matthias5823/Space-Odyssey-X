@@ -13,7 +13,7 @@
     <script src="./js/variables.js/opponents-Auroria.js"></script>
     <script src="./js/models/drawable-object.class.js"></script>
     <script src="./js/models/movable-object.class.js"></script>
-    <script src="./js/models/projectile.class.js"></script> 
+    <script src="./js/models/projectile.class.js"></script>
     <script src="./js/models/character.class.js"></script>
     <script src="./js/models/cloud.class.js"></script>
     <script src="./js/models/status-bar.class.js"></script>
@@ -38,13 +38,23 @@
         <h1>Space Odyssey X</h1>
     </header>
 
-    <canvas id="canvas" width="1000" height="563">
+    <section class="start-side">
+        <div class="control">
+            <p style="color: white;">Wähle deinen Spieler und klicke dann auf Spiel starten</p>
+
+            <img style="width: 50px; height: 50px;" src="./assets/imgs/Zix/portait_Zix.png" alt=""
+                onclick="setCharacter('Zix')">
+            <img style="width: 50px; height: 50px;" src="./assets/imgs/Captian_Leon/portait_Captian_Leon.png" alt=""
+                onclick="setCharacter('CaptianLeon')">
+
+            <button onclick="startGame()">Spiel Starten</button>
+        </div>
+
+    </section>
+
+    <canvas id="canvas" width="1000" height="563" class="">
 
     </canvas>
-    <img style="width: 50px; height: 50px;" src="./assets/imgs/Zix/portait_Zix.png"  alt="" onclick="setCharacter('Zix')">
-    <img style="width: 50px; height: 50px;" src="./assets/imgs/Captian_Leon/portait_Captian_Leon.png" alt="" onclick="setCharacter('CaptianLeon')">
-
-    <button onclick="startGame()">Spiel Starten</button>
 
 
 </body>
