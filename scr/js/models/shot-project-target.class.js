@@ -1,9 +1,9 @@
 class ShotProjectTarget extends Projectile {
-    width = 50;
-    height = 30;
+    width = 70;
+    height = 40;
     speedX = 10;
     damage = 20;        // so viel Energie zieht ein Treffer beim Gegner ab
-    maxDistance = 350;  // maximale Flugweite in Pixeln
+    maxDistance = 410;  // maximale Flugweite in Pixeln
     startX = 0;
 
     constructor(x, y, direction) {
