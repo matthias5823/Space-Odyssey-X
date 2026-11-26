@@ -1,19 +1,27 @@
 class World {
-    character = new Character();
-    level = levelAuroria;
+    character = new Character();    // Erstellt - Läd den Spiel Character
+    level = levelAuroria;           // Lädt das LevelAuroria
     canvas;
     ctx;
     keyboard;
     camera_x = 0;
-    statusBar = new StatusBar();
-    lifeBar = new LifeBar();
+    lifeBar = new LifeBar();        // Läd die Anzeige der Herzen (Leben)
     shotProjectTarget = [];
     enemyShots = [];
-
+    statusBar = new StatusBar(players[userPlayer].images.Energy, 0, 20, 180, 50);       // Lädt die Energy (Treffer) Bar ein für den Charakter
+    bossBar = new StatusBar(finalOpponents['Auroria'].images.Energy, 730, 10, 260, 58); // Lädt die Energy (Treffer) Bar ein für den Endboss 
+    ammoBar = new ItemCounter('./assets/imgs/items/icons/battery.webp', 10, 75, 30);    // mit Balken (max. 30)
+    coinCounter = new ItemCounter('./assets/imgs/items/icons/coin.webp', 10, 118);
+    diamondCounter = new ItemCounter('./assets/imgs/items/icons/diamond.webp', 100, 118);
+    coins = 0;
+    diamonds = 0;
+    totalCoins = 0;        // Münzen im Level insgesamt
+    totalDiamonds = 0;     // Diamanten im Level insgesamt
 
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
+        this.countCollectibles();
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.draw();
@@ -22,6 +30,9 @@ class World {
         this.checkShotCollisions();
         this.checkJumpOnOpponents();
         this.checkEnemyShotCollisions();
+        this.checkItemCollection();
+        this.checkGameEnd();
+        this.ammoBar.setValue(this.character.ammo);     // Startwert anzeigen
     }
 
     setWorld() {
@@ -42,11 +53,16 @@ class World {
     }
 
     draw() {
+        this.animationFrameId = requestAnimationFrame(function () { // ID der Zeichenschleife merken
+            self.draw();
+        });
         this.removeOldShots();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
+        this.addObjectsToMap(this.level.clouds);
+        this.addObjectsToMap(this.level.items);          // NEU: Items in der Spielwelt
 
         this.addObjectsToMap(this.level.clouds);
 
@@ -56,6 +72,10 @@ class World {
 
         this.addToMap(this.lifeBar);
         this.addToMap(this.statusBar);
+        this.drawBossBar();
+        this.addToMap(this.ammoBar);
+        this.addToMap(this.coinCounter);
+        this.addToMap(this.diamondCounter);
         this.ctx.translate(this.camera_x, 0); // Forwards
         //  <----------------------- ⊼⊼⊼⊼ End Space for fix Objects ⊼⊼⊼⊼ -----------------
         this.addToMap(this.character);
@@ -119,7 +139,8 @@ class World {
                 this.level.opponents.forEach((opponent) => {
                     if (shot.hasHit || opponent.isDead()) return; // verbrauchter Schuss oder toter Gegner → überspringen
 
-                    let isTarget = opponent instanceof Lizard || opponent instanceof PlantCreature || opponent instanceof CrystalBeetle;
+                    let isTarget = opponent instanceof Lizard || opponent instanceof PlantCreature ||
+                        opponent instanceof CrystalBeetle || opponent instanceof Endboss;
 
                     if (isTarget && shot.isColliding(opponent)) {
                         shot.hasHit = true;          // Schuss verbraucht
@@ -169,9 +190,10 @@ class World {
 
             // verbrauchte oder aus dem Level geflogene Schüsse entfernen
             this.enemyShots = this.enemyShots.filter((shot) => {
-                let gone = shot.hasHit || shot.x < -200 || shot.x > this.level.level_end_x + 200;
-                if (gone) shot.stop();
-                return !gone;
+                let gone = shot.hasHit || shot.x < -200 || shot.x > this.level.level_end_x + 200 ||
+                    shot.y > this.canvas.height || shot.y < -100;
+                if (gone) shot.stop();       // ← hier wird gone benutzt: Intervalle stoppen
+                return !gone;                // ← und hier: nur Schüsse behalten, die NICHT weg sind
             });
         }, 1000 / 60);
     }
@@ -188,9 +210,89 @@ class World {
         this.lifeBar.setPercentage(this.character.lives);     // Leben-Anzeige aktualisieren (3, 2, 1, 0)
     }
 
+    drawBossBar() {
+        let boss = this.level.opponents.find((opponent) => opponent instanceof Endboss);
+        if (boss && boss.isActive) {
+            this.addToMap(this.bossBar);
+        }
+    }
+
+    /**
+     * Prüft 60× pro Sekunde, ob der Charakter ein Item berührt, und sammelt es ein.
+     */
+    checkItemCollection() {
+        setInterval(() => {
+            if (this.character.isDead()) return;
+            this.level.items.forEach((item) => {
+                if (!item.isCollected && this.character.isColliding(item)) {
+                    item.isCollected = true;     // zuerst markieren, damit es nicht doppelt zählt
+                    item.collect(this);          // jedes Item weiß selbst, was es tut
+                }
+            });
+            this.removeCollectedItems();
+        }, 1000 / 60);
+    }
 
 
+    /**
+     * Entfernt eingesammelte Items aus dem Level und stoppt ihre Animation.
+     */
+    removeCollectedItems() {
+        this.level.items = this.level.items.filter((item) => {
+            if (item.isCollected) item.stop();
+            return !item.isCollected;
+        });
+    }
 
+    /**
+     * Zählt, wie viele Münzen und Diamanten es im Level insgesamt gibt.
+     */
+    countCollectibles() {
+        this.totalCoins = this.level.items.filter((item) => item instanceof Coin).length;
+        this.totalDiamonds = this.level.items.filter((item) => item instanceof Diamond).length;
+    }
 
+    /**
+     * Prüft regelmäßig, ob das Spiel vorbei ist:
+     * Charakter fertig gestorben → verloren, Endboss entfernt → gewonnen.
+     */
+    checkGameEnd() {
+        setStoppableInterval(() => {
+            if (this.character.isRemovable) {
+                endGame(false);
+            } else if (this.isBossDefeated()) {
+                endGame(true);
+            }
+        }, 200);
+    }
+
+    /**
+     * Ist der Endboss nach seiner Dead-Animation aus dem Level entfernt?
+     * @returns {boolean}
+     */
+    isBossDefeated() {
+        return !this.level.opponents.some((opponent) => opponent instanceof Endboss);
+    }
+
+    /**
+     * Stoppt das komplette Spiel: alle Intervalle und die Zeichenschleife.
+     */
+    stop() {
+        stopAllIntervals();
+        cancelAnimationFrame(this.animationFrameId);
+    }
+
+    /**
+     * Liefert die Statistik der Runde für den Endscreen.
+     * @returns {{coins: number, totalCoins: number, diamonds: number, totalDiamonds: number}}
+     */
+    getStats() {
+        return {
+            coins: this.coins,
+            totalCoins: this.totalCoins,
+            diamonds: this.diamonds,
+            totalDiamonds: this.totalDiamonds
+        };
+    }
 
 }
