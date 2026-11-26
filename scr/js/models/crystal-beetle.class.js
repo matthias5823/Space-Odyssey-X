@@ -31,9 +31,9 @@ class CrystalBeetle extends MovableObject {
 
     animate() {
         // Bewegung: nur laufen, wenn nicht tot, nicht verletzt und nicht am Schießen
-        this.moveInterval = setInterval(() => this.moveBeetle(), 70);
+        this.moveInterval = setStoppableInterval(() => this.moveBeetle(), 70);
 
-        this.animationInterval = setInterval(() => {
+        this.animationInterval = setStoppableInterval(() => {
             if (this.isDead()) {
                 this.playDeadAnimation(this.imagesDead);
             } else if (this.isHurt()) {
