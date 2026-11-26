@@ -14,6 +14,7 @@ const backgroundLayers = [
     '05-ferne-felsen',
     '06-fluss',
     '07-ufer',
+    '08-inseln',
     '11-boden'
 ];
 
@@ -28,7 +29,8 @@ function initLevel() {
     levelAuroria = new Level(
         createOpponents(),
         createClouds(),
-        createBackgrounds()
+        createBackgrounds(),
+        createItems()
     );
 }
 
@@ -111,4 +113,44 @@ function shuffle(array) {
         [array[i], array[j]] = [array[j], array[i]];               // zwei Elemente tauschen
     }
     return array;
+}
+
+const itemHeightGround = 385;   // erreichbar im Stehen
+const itemHeightJump = 250;     // nur im Sprung erreichbar
+const itemHeightHigh = 170;     // nur ganz oben im Sprung
+
+
+/**
+ * Erzeugt alle Items des Levels.
+ * @returns {Collectible[]} Liste der Items
+ */
+function createItems() {
+    return [
+        ...createItemRow(Coin, 450, 5, 60, itemHeightGround),
+        ...createItemRow(Coin, 1300, 5, 60, itemHeightJump),
+        ...createItemRow(Coin, 2100, 6, 55, itemHeightGround),
+        ...createItemRow(Coin, 2900, 5, 60, itemHeightJump),
+        ...createItemRow(Coin, 3550, 4, 60, itemHeightGround),
+        ...createItemRow(Battery, 800, 4, 850, itemHeightGround),
+        ...createItemRow(Diamond, 1550, 3, 1100, itemHeightHigh),
+        new MedKit(1900, itemHeightGround)
+    ];
+}
+
+
+/**
+ * Erzeugt mehrere gleiche Items in einer Reihe.
+ * @param {Function} Type - Klasse, z. B. Coin
+ * @param {number} startX - x-Position des ersten Items
+ * @param {number} count - Anzahl
+ * @param {number} gap - Abstand zwischen den Items
+ * @param {number} y - Höhe
+ * @returns {Collectible[]} die erzeugten Items
+ */
+function createItemRow(Type, startX, count, gap, y) {
+    let row = [];
+    for (let i = 0; i < count; i++) {
+        row.push(new Type(startX + i * gap, y));
+    }
+    return row;
 }
