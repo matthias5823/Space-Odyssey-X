@@ -7,7 +7,10 @@ class Character extends MovableObject {
     shotOfSet = players[userPlayer].shotOfSet;
     speed = players[userPlayer].speed;
     invulnerableUntil = 0; // bis zu diesem Zeitpunkt (ms) bekommt der Charakter keinen Schaden
+    offset = players[userPlayer].offset;
     muzzle = players[userPlayer].muzzle;                    // Waffenmündung im Bild
+    ammo = 12;                // Schüsse zu Beginn
+    maxAmmo = 30;             // mehr passt nicht ins Magazin
 
     imagesSleep = players[userPlayer].images.Sleep;
     imagesWalking = players[userPlayer].images.Walking;
@@ -36,7 +39,7 @@ class Character extends MovableObject {
 
     animate() {
 
-        setInterval(() => {
+        setStoppableInterval(() => {
             if (this.isDead()) return;   // Game Over → keine Steuerung mehr
 
             if (this.world.keyboard.right && this.x < this.world.level.level_end_x) {
@@ -55,7 +58,7 @@ class Character extends MovableObject {
                 this.jump();
             }
 
-            if (this.world.keyboard.space && !this.isShooting && !this.spaceLocked) {
+            if (this.world.keyboard.space && !this.isShooting && !this.spaceLocked && this.ammo > 0) {
                 this.isShooting = true;
                 this.shootFrame = 0;
                 this.spaceLocked = true;
@@ -72,7 +75,7 @@ class Character extends MovableObject {
         }, 1000 / 60);
 
 
-        setInterval(() => {
+        setStoppableInterval(() => {
             this.updateAnimation();   // passendes Bild anzeigen
             this.updateShooting();    // Schuss-Ablauf läuft unabhängig davon weiter
         }, 150);
@@ -99,6 +102,8 @@ class Character extends MovableObject {
         let shot = new ShotProjectTarget(muzzle.x, muzzle.y, direction);
         shot.centerOn(muzzle);
         this.world.shotProjectTarget.push(shot);
+        this.ammo--;                                  // Munition verbrauchen
+        this.world.ammoBar.setValue(this.ammo);       // Anzeige aktualisieren
     }
 
     // Prüft, ob der Charakter von oben auf mo fällt.
