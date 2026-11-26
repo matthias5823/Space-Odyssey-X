@@ -8,19 +8,25 @@
     <link rel="stylesheet" href="./style/style.css">
     <link rel="shortcut icon" href="./assets/icons/favicon.webp" type="image/x-icon">
     <script src="./js/variables.js/players.js"></script>
-    <script src="./js/variables.js/game.js"></script>
     <script src="./js/variables.js/finals-Opponents.js"></script>
     <script src="./js/variables.js/opponents-Auroria.js"></script>
+    <script src="./js/variables.js/items.js"></script>
+
     <script src="./js/models/drawable-object.class.js"></script>
     <script src="./js/models/movable-object.class.js"></script>
     <script src="./js/models/projectile.class.js"></script>
+    <script src="./js/models/collectible.class.js"></script>
+    <script src="./js/models/coin.class.js"></script>
+    <script src="./js/models/diamond.class.js"></script>
+    <script src="./js/models/battery.class.js"></script>
+    <script src="./js/models/medkit.class.js"></script>
+    <script src="./js/models/item-counter.class.js"></script>
     <script src="./js/models/character.class.js"></script>
     <script src="./js/models/cloud.class.js"></script>
     <script src="./js/models/status-bar.class.js"></script>
     <script src="./js/models/life-status.class.js"></script>
     <script src="./js/models/plant-creature.class.js"></script>
     <script src="./js/models/crystal-beetle.class.js"></script>
-
     <script src="./js/models/lizard.class.js"></script>
     <script src="./js/models/world.class.js"></script>
     <script src="./js/models/backgraound-object.class.js"></script>
@@ -30,6 +36,8 @@
     <script src="./js/models/shot-project-target.class.js"></script>
     <script src="./js/levels/level_Auroria.js"></script>
     <script src="./js/models/enemy-shot.class.js"></script>
+
+    <script src="./js/menu.js"></script>
     <script src="./js/game.js"></script>
 </head>
 
@@ -38,25 +46,11 @@
         <h1>Space Odyssey X</h1>
     </header>
 
-    <section class="start-side">
-        <div class="control">
-            <p style="color: white;">Wähle deinen Spieler und klicke dann auf Spiel starten</p>
-
-            <img style="width: 50px; height: 50px;" src="./assets/imgs/Zix/portait_Zix.png" alt=""
-                onclick="setCharacter('Zix')">
-            <img style="width: 50px; height: 50px;" src="./assets/imgs/Captian_Leon/portait_Captian_Leon.png" alt=""
-                onclick="setCharacter('CaptianLeon')">
-
-            <button onclick="startGame()">Spiel Starten</button>
-        </div>
-
-    </section>
-
-    <canvas id="canvas" width="1000" height="563" class="">
-
-    </canvas>
-
-
+    <main class="game-container">
+        <section id="start-screen" class="start-side"></section>
+        <canvas id="canvas" width="1000" height="563" class="off"></canvas>
+        <section id="end-screen" class="end-screen off"></section>
+    </main>
 </body>
 
 </html>
