@@ -27,12 +27,12 @@ class Projectile extends MovableObject {
     // Bewegt das Geschoss in Flugrichtung und spielt die Flug-Animation ab.
     fly() {
         // Interval für die Bewegung
-        this.moveInterval = setInterval(() => {
+        this.moveInterval = setStoppableInterval(() => {
             this.x += this.velocityX ?? this.speedX * this.direction;   // ?? = "falls null, dann …"
             this.y += this.velocityY;
         }, 1000 / 60);
         // Interval für die Animation
-        this.animationInterval = setInterval(() => {
+        this.animationInterval = setStoppableInterval(() => {
             this.playAnimation(this.images);
         }, 80);
     }

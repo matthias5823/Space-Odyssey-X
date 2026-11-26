@@ -12,7 +12,7 @@ class PlantCreature extends MovableObject {
     isGrown = false;                                                    // ist die Grow-Animation fertig?
 
     sizeGrow = { width: 80, height: 50 };     // Größe während Warten + Grow (anpassen)
-    sizeSnatch = { width: 120, height: 140 };  // Größe während Snatch (anpassen)
+    sizeSnatch = { width: 100, height: 120 };  // Größe während Snatch (anpassen)
     groundY = 450;                             // Unterkante der Plant (jetziges y 365 + Standardhöhe 140)
     offset = opponentsAuroria['plant-creature'].offset;
 
@@ -27,7 +27,7 @@ constructor(x = 20 + Math.random() * 2500) {
     }
 
     animate() {
-        this.animationInterval = setInterval(() => {
+        this.animationInterval = setStoppableInterval(() => {
             if (this.isDead()) {
                 this.playDeadAnimation(this.imagesDead);                // tot → einmal sterben
             } else if (this.isHurt()) {

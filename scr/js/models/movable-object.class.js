@@ -11,7 +11,7 @@ class MovableObject extends DrawableObject {
     hurtDuration = 1500; // wie lange (ms) die Hurt-Phase nach einem Treffer dauert
 
     applyGravity() {
-        setInterval(() => {
+        setStoppableInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
